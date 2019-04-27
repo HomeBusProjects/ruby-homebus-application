@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'homebus_app'
-  s.version     = '0.0.6'
+  s.version     = '0.0.8'
   s.licenses    = ['MIT']
   s.summary     = 'Ruby library for HomeBus applications'
   s.description = 'Library for building HomeBus applications in Ruby'
@@ -10,5 +10,4 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://homebus.org/'
   s.metadata    = { 'source_code_uri' => 'https://github.com/romkey/ruby-homebus-app' }
   s.add_runtime_dependency 'dotenv'
-#  s.add_runtime_dependency 'homebus', git: 'https://github.com/HomeBusProjects/ruby-homebus'
 end

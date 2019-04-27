@@ -52,6 +52,17 @@ class HomeBusApp
     @mqtt_password = ENV['MQTT_PASSWORD']
   end
 
+  def save_provisioning!(info)
+    File.write(provisioning_file) do |f|
+      f.puts "MQTT_SERVER=#{info[:host]}"
+      f.puts "MQTT_PORT=#{info[:port]}"
+      f.puts "MQTT_USERNAME=#{info[:username]}"
+      f.puts "MQTT_PASSWORD=#{info[:password]}"
+      f.puts "UUID=#{info[:uuid]}"
+    end
+  end
+    
+
   def provision!
     if mqtt_server && mqtt_port && mqtt_username && mqtt_password
       return true
@@ -75,12 +86,10 @@ class HomeBusApp
     abort 'MQTT provisioning failed'
   end
 
-  pp mqtt
+  save_provisioning!
+  load_provisioning!
 
-  uuid = mqtt[:uuid]    
-    
-
-    return false
+  true
   end
 
   def daemonize?
