@@ -1,8 +1,10 @@
+require 'dotenv'
+
 # based on Jake Gordon's excellent article, "Daemonizing Ruby Processes"
 # https://codeincomplete.com/posts/ruby-daemons/
 
 class HomeBusApp
-  attr_reader :options, :quit
+  attr_reader :options, :quit, :homebus_server, :homebus_port, :mqtt_server, :mqtt_port, :mqtt_username, :mqtt_password
   
   def initialize(options)
     @options = options
@@ -27,6 +29,7 @@ class HomeBusApp
 
     setup!
 
+    load_provisioning!
     while !provision!
       sleep 60
     end
@@ -37,12 +40,55 @@ class HomeBusApp
 
   end
 
+  def load_provisioning!
+    Dotenv.load(provisioning_file)
+
+    @homebus_server = ENV['HOMEBUS_SERVER']
+    @homebus_port = ENV['HOMEBUS_PORT']
+
+    @mqtt_server = ENV['MQTT_SERVER']
+    @mqtt_port = ENV['MQTT_PORT']
+    @mqtt_username = ENV['MQTT_USERNAME']
+    @mqtt_password = ENV['MQTT_PASSWORD']
+  end
+
   def provision!
+    if mqtt_server && mqtt_port && mqtt_username && mqtt_password
+      return true
+    end
+
+    unless homebus_server && homebus_port
+      abort "No HomeBus provisioning server info"
+    end
+
+    mqtt = HomeBus.provision serial_number: serial_number,
+                           manufacturer: manufacturer,
+                           model: model,
+                           friendly_name: friendly_name,
+                           friendly_location: friendly_location,
+                           pin: pin,
+                           devices: devices,
+                           provisioner_name: @homebus_server,
+                           provisioner_port: @homebus_port
+
+  unless mqtt
+    abort 'MQTT provisioning failed'
+  end
+
+  pp mqtt
+
+  uuid = mqtt[:uuid]    
+    
+
     return false
   end
 
   def daemonize?
     options[:daemonize]
+  end
+
+  def provisioning_file
+    options[:provisioning_file] || '.env.provisioning'
   end
 
   def logfile
