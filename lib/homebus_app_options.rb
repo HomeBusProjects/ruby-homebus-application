@@ -17,7 +17,7 @@ class HomeBusAppOptions
     warn_help      = 'enable warnings'
 
     op = OptionParser.new
-    op.banner =  'An example of how to daemonize a long running Ruby process.'
+    op.banner =  banner
     op.separator ''
     op.separator "Usage: #{name} [@options]"
     op.separator ''
@@ -28,6 +28,10 @@ class HomeBusAppOptions
     op.on('-d', '--daemonize',   daemonize_help) {         @options[:daemonize] = true  }
     op.on('-p', '--pid PIDFILE', pidfile_help)   { |value| @options[:pidfile]   = value }
     op.on('-l', '--log LOGFILE', logfile_help)   { |value| @options[:logfile]   = value }
+    op.separator ''
+
+    op.separator "HomeBus options"
+    op.on("-b", "--homebus HOMEBUS_SERVER", homebus_help) { |value| options[:homebus] = value; }
     op.separator ''
 
     op.separator 'Ruby options:'
@@ -44,12 +48,16 @@ class HomeBusAppOptions
     op.parse!(ARGV)
   end
 
-  def version
-    '0.0.1'
+  def banner
+    'An example of how to daemonize a long running Ruby process.'
   end
 
   def name
     'HomeBusApp'
+  end
+
+  def version
+    '0.0.1'
   end
 
   def app_options(op)

@@ -26,6 +26,10 @@ class MyAppOptions < HomeBusAppOptions
 end
 
 class MyApp < HomeBusApp
+  def setup!
+
+  end
+
   def work!
 
   end

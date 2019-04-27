@@ -25,10 +25,20 @@ class HomeBusApp
       suppress_output
     end
 
+    setup!
+
+    while !provision!
+      sleep 60
+    end
+
     while !quit
       work!
     end
 
+  end
+
+  def provision!
+    return false
   end
 
   def daemonize?
