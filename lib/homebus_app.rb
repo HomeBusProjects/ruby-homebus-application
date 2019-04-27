@@ -53,7 +53,7 @@ class HomeBusApp
   end
 
   def save_provisioning!(info)
-    File.write(provisioning_file) do |f|
+    File.open(provisioning_file, 'w') do |f|
       f.puts "MQTT_SERVER=#{info[:host]}"
       f.puts "MQTT_PORT=#{info[:port]}"
       f.puts "MQTT_USERNAME=#{info[:username]}"
