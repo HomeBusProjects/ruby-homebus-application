@@ -89,6 +89,8 @@ class HomeBusApp
   save_provisioning! mqtt
   load_provisioning!
 
+  @mqtt = MQTT::Client.connect mqtt
+
   true
   end
 
