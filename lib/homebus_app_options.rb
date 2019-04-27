@@ -15,6 +15,7 @@ class HomeBusAppOptions
     include_help   = 'an additional $LOAD_PATH'
     debug_help     = 'set $DEBUG to true'
     warn_help      = 'enable warnings'
+    homebus_help   = 'specify HomeBus server'
 
     op = OptionParser.new
     op.banner =  banner
