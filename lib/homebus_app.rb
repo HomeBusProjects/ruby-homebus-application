@@ -86,7 +86,7 @@ class HomeBusApp
     abort 'MQTT provisioning failed'
   end
 
-  save_provisioning!
+  save_provisioning! mqtt
   load_provisioning!
 
   true
