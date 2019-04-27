@@ -43,8 +43,8 @@ class HomeBusApp
   def load_provisioning!
     Dotenv.load(provisioning_file)
 
-    @homebus_server = ENV['HOMEBUS_SERVER']
-    @homebus_port = ENV['HOMEBUS_PORT']
+    @homebus_server = options[:homebus_server] || ENV['HOMEBUS_SERVER']
+    @homebus_port = options[:homebus_port] || ENV['HOMEBUS_PORT']
 
     @mqtt_server = ENV['MQTT_SERVER']
     @mqtt_port = ENV['MQTT_PORT']

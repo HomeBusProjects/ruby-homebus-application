@@ -15,7 +15,8 @@ class HomeBusAppOptions
     include_help   = 'an additional $LOAD_PATH'
     debug_help     = 'set $DEBUG to true'
     warn_help      = 'enable warnings'
-    homebus_help   = 'specify HomeBus server'
+    homebus_help   = 'specify HomeBus server name or IP address'
+    homebus_port_help   = 'specify HomeBus server port number'
 
     op = OptionParser.new
     op.banner =  banner
@@ -32,7 +33,8 @@ class HomeBusAppOptions
     op.separator ''
 
     op.separator "HomeBus options"
-    op.on("-b", "--homebus HOMEBUS_SERVER", homebus_help) { |value| options[:homebus] = value; }
+    op.on("-b", "--homebus HOMEBUS_SERVER", homebus_help) { |value| options[:homebus_server] = value; }
+    op.on("-P", "--homebus-port HOMEBUS_PORT", homebus_port_help) { |value| options[:homebus_port] = value; }
     op.separator ''
 
     op.separator 'Ruby options:'
