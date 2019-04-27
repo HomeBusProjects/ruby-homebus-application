@@ -65,6 +65,7 @@ class HomeBusApp
 
   def provision!
     if mqtt_server && mqtt_port && mqtt_username && mqtt_password
+      @mqtt = MQTT::Client.connect host: mqtt_server, port: mqtt_port, username: mqtt_username, password: mqtt_password
       return true
     end
 
