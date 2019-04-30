@@ -51,6 +51,7 @@ class HomeBusApp
     @mqtt_port = ENV['MQTT_PORT'].to_i
     @mqtt_username = ENV['MQTT_USERNAME']
     @mqtt_password = ENV['MQTT_PASSWORD']
+    @uuid = ENV['UUID']
   end
 
   def save_provisioning!(info)
