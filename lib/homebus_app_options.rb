@@ -46,6 +46,7 @@ class HomeBusAppOptions
     op.separator 'Common options:'
     op.on('-h', '--help')    { puts op.to_s; exit }
     op.on('-v', '--version') { puts version; exit }
+    op.on('-V', '--verbose') { options[:verbose] = true; }
     op.separator ''
 
     op.parse!(ARGV)
