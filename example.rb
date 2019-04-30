@@ -2,6 +2,8 @@
 
 require './lib/homebus_app'
 require './lib/homebus_app_options'
+require 'mqtt'
+require 'json'
 
 class MyAppOptions < HomeBusAppOptions
   def app_options(op)
@@ -31,11 +33,56 @@ class MyApp < HomeBusApp
   end
 
   def work!
+    value = {
+      foo: 'bar',
+      timestamp: Time.now.to_i
+    }
 
+    @mqtt.publish '/example', value.to_json, true
+    sleep 30
+  end
+
+  def manufacturer
+    'HomeBus'
+  end
+
+  def model
+    'Example'
+  end
+
+  def friendly_name
+    'Example'
+  end
+
+  def friendly_location
+    'HomeBus Core'
+  end
+
+  def serial_number
+    ''
+  end
+
+  def pin
+    ''
+  end
+
+  def devices
+       [ {
+        friendly_name: 'System Ticker',
+        friendly_location: 'The Core',
+        update_frequency: 1000,
+        accuracy: 10,
+        precision: 100,
+        wo_topics: [ 'tick' ],
+        ro_topics: [],
+        rw_topics: []
+         } ]
   end
 end
 
 
 hbao = MyAppOptions.new
 
-hba = HomeBusApp.new hbao.options
+hba = MyApp.new hbao.options
+hba.run!
+

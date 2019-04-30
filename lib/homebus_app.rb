@@ -1,3 +1,4 @@
+require 'homebus'
 require 'dotenv'
 
 # based on Jake Gordon's excellent article, "Daemonizing Ruby Processes"
@@ -47,7 +48,7 @@ class HomeBusApp
     @homebus_port = options[:homebus_port] || ENV['HOMEBUS_PORT']
 
     @mqtt_server = ENV['MQTT_SERVER']
-    @mqtt_port = ENV['MQTT_PORT']
+    @mqtt_port = ENV['MQTT_PORT'].to_i
     @mqtt_username = ENV['MQTT_USERNAME']
     @mqtt_password = ENV['MQTT_PASSWORD']
   end
@@ -64,10 +65,8 @@ class HomeBusApp
     
 
   def provision!
-    pp @mqtt_server, @mqtt_port, @mqtt_username, @mqtt_password
-
     if mqtt_server && mqtt_port && mqtt_username && mqtt_password
-      @mqtt = MQTT::Client.connect(host: @mqtt_server, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password)
+      @mqtt = MQTT::Client.connect(@mqtt_server, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password)
       return true
     end
 
@@ -92,7 +91,7 @@ class HomeBusApp
   save_provisioning! mqtt
   load_provisioning!
 
-  @mqtt = MQTT::Client.connect(host: @mqtt_server, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password)
+  @mqtt = MQTT::Client.connect(@mqtt_server, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password, ssl: false)
 
   true
   end
