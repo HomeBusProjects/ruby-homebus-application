@@ -36,7 +36,19 @@ class HomeBusApp
     end
 
     while !quit
-      work!
+      begin
+        work!
+      rescue
+        puts "work! exception"
+
+        unless @mqtt.connected?
+          connect!
+
+          unless @mqtt.connected?
+            sleep(5)
+          end
+        end
+      end
     end
 
   end
@@ -65,6 +77,10 @@ class HomeBusApp
   end
     
 
+  def connect!
+      @mqtt = MQTT::Client.connect(@mqtt_server, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password)
+  end
+
   def provision!
     if mqtt_server && mqtt_port && mqtt_username && mqtt_password
       @mqtt = MQTT::Client.connect(@mqtt_server, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password)
@@ -92,7 +108,7 @@ class HomeBusApp
   save_provisioning! mqtt
   load_provisioning!
 
-  @mqtt = MQTT::Client.connect(@mqtt_server, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password, ssl: false)
+  connect!
 
   true
   end
