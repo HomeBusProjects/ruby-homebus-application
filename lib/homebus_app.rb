@@ -5,7 +5,7 @@ require 'dotenv'
 # https://codeincomplete.com/posts/ruby-daemons/
 
 class HomeBusApp
-  attr_reader :options, :quit, :homebus_server, :homebus_port, :mqtt_server, :mqtt_port, :mqtt_username, :mqtt_password
+  attr_reader :options, :quit, :homebus_server, :homebus_port, :mqtt_broker, :mqtt_port, :mqtt_username, :mqtt_password
   
   def initialize(options)
     @options = options
@@ -38,8 +38,9 @@ class HomeBusApp
     while !quit
       begin
         work!
-      rescue
+      rescue => error
         puts "work! exception"
+        pp error
 
         unless @mqtt.connected?
           connect!
@@ -59,7 +60,7 @@ class HomeBusApp
     @homebus_server = options[:homebus_server] || ENV['HOMEBUS_SERVER']
     @homebus_port = options[:homebus_port] || ENV['HOMEBUS_PORT']
 
-    @mqtt_server = ENV['MQTT_SERVER']
+    @mqtt_broker = ENV['MQTT_BROKER'] || ENV['MQTT_SERVER']
     @mqtt_port = ENV['MQTT_PORT'].to_i
     @mqtt_username = ENV['MQTT_USERNAME']
     @mqtt_password = ENV['MQTT_PASSWORD']
@@ -68,22 +69,21 @@ class HomeBusApp
 
   def save_provisioning!(info)
     File.open(provisioning_file, 'w') do |f|
-      f.puts "MQTT_SERVER=#{info[:host]}"
+      f.puts "MQTT_BROKER=#{info[:host]}"
       f.puts "MQTT_PORT=#{info[:port]}"
       f.puts "MQTT_USERNAME=#{info[:username]}"
       f.puts "MQTT_PASSWORD=#{info[:password]}"
       f.puts "UUID=#{info[:uuid]}"
     end
   end
-    
 
   def connect!
-      @mqtt = MQTT::Client.connect(@mqtt_server, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password)
+      @mqtt = MQTT::Client.connect(@mqtt_broker, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password)
   end
 
   def provision!
-    if mqtt_server && mqtt_port && mqtt_username && mqtt_password
-      @mqtt = MQTT::Client.connect(@mqtt_server, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password)
+    if @mqtt_broker && @mqtt_port && @mqtt_username && @mqtt_password
+      @mqtt = MQTT::Client.connect(@mqtt_broker, port: @mqtt_port, username: @mqtt_username, password: @mqtt_password)
       return true
     end
 
@@ -111,6 +111,33 @@ class HomeBusApp
   connect!
 
   true
+  end
+
+  def publish!(msg)
+    if @mqtt_broker && @mqtt_port && @mqtt_username && @mqtt_password
+      @mqtt.publish "homebus/#{@uuid}", msg
+    else
+      
+    end
+  end
+
+  def subscribe!(*topics)
+    topics.each do |topic| @mqtt.subscribe topic end
+  end
+
+  def subscribe_to_devices!(*uuids)
+    uuids.each do |uuid|
+      topic =  '/homebus/device/' + uuid
+      puts topic
+      @mqtt.subscribe topic
+    end
+  end
+
+  def listen!
+    @mqtt.get do |topic, msg|
+      decoded_msg = JSON.parse msg, symbolize_names: true
+      receive! decoded_msg
+    end
   end
 
   def daemonize?
