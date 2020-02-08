@@ -128,7 +128,8 @@ class HomeBusApp
   def subscribe_to_devices!(*uuids)
     uuids.each do |uuid|
       topic =  '/homebus/device/' + uuid
-      puts topic
+      @mqtt.subscribe topic
+      topic =  'homebus/device/' + uuid
       @mqtt.subscribe topic
     end
   end
