@@ -113,9 +113,9 @@ class HomeBusApp
   true
   end
 
-  def publish!(msg)
+  def publish!(ddc, msg)
     if @mqtt_broker && @mqtt_port && @mqtt_username && @mqtt_password
-      @mqtt.publish "homebus/device/#{@uuid}", msg, true
+      @mqtt.publish "homebus/device/#{@uuid}/#{ddc}", msg, true
     else
       
     end
