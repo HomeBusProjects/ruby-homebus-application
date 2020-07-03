@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'homebus_app'
-  s.version     = '0.2.1'
+  s.version     = '0.9.0'
   s.licenses    = ['MIT']
   s.summary     = 'Ruby library for HomeBus applications'
   s.description = 'Library for building HomeBus applications in Ruby'

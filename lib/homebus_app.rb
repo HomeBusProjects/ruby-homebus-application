@@ -114,7 +114,20 @@ class HomeBusApp
   end
 
   def publish!(ddc, msg)
-    json = JSON.generate(msg)
+    publish_to! @uuid, ddc, msg
+  end
+
+  def publish_to!(uuid, ddc, msg)
+    homebus_msg = {
+      source: uuid,
+      timestamp: Time.now,
+      contents: {
+        ddc: ddc,
+        payload: msg
+      }
+    }
+
+    json = JSON.generate(homebus_msg)
     if @mqtt_broker && @mqtt_port && @mqtt_username && @mqtt_password
       @mqtt.publish "homebus/device/#{@uuid}/#{ddc}", json, true
     else
