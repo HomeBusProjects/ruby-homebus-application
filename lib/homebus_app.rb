@@ -120,7 +120,7 @@ class HomeBusApp
   def publish_to!(uuid, ddc, msg)
     homebus_msg = {
       source: uuid,
-      timestamp: Time.now,
+      timestamp: Time.now.to_i,
       contents: {
         ddc: ddc,
         payload: msg
