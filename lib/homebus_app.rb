@@ -135,23 +135,41 @@ class HomeBusApp
     end
   end
 
-  def subscribe!(*topics)
-    topics.each do |topic| @mqtt.subscribe topic end
+  def subscribe!(*ddcs)
+    ddcs.each do |ddc| @mqtt.subscribe 'homebus/device/+/' + ddc end
   end
 
-  def subscribe_to_devices!(*uuids)
+  def subscribe_to_sources!(*uuids)
     uuids.each do |uuid|
-      topic =  '/homebus/device/' + uuid
-      @mqtt.subscribe topic
       topic =  'homebus/device/' + uuid
       @mqtt.subscribe topic
     end
   end
 
+  def subscribe_to_source_ddc!(source, ddc)
+    topic =  'homebus/device/' + uuid + '/' + ddc
+    @mqtt.subscribe topic
+  end
+
   def listen!
     @mqtt.get do |topic, msg|
-      decoded_msg = JSON.parse msg, symbolize_names: true
-      receive! decoded_msg
+      begin
+        parsed = JSON.parse msg, symbolize_names: true
+      rescue
+        next
+      end
+
+      if parsed[:source].nil? || parsed[:contents].nil?
+        next
+      end
+
+      receive!({
+                 source: parsed[:source],
+                 timestamp: parsed[:timestamp],
+                 sequence: parsed[:sequence],
+                 ddc: parsed[:contents][:ddc],
+                 payload: parsed[:contents][:payload]
+               })
     end
   end
 
