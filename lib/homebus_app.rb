@@ -147,7 +147,7 @@ class HomeBusApp
   end
 
   def subscribe_to_source_ddc!(source, ddc)
-    topic =  'homebus/device/' + uuid + '/' + ddc
+    topic =  'homebus/device/' + source + '/' + ddc
     @mqtt.subscribe topic
   end
 
