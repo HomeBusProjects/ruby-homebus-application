@@ -1,5 +1,7 @@
 # Ruby HomeBus Application Class
 
+**This repo is deprecated. Its functionality has been folded into the [ruby-homebus](https://github.com/HomeBusProjects/ruby-homebus) gem.**
+
 This class does most of the repetitive work for Ruby HomeBus applications.
 
 ## Usage
